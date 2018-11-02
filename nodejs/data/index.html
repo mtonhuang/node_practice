@@ -6,5 +6,136 @@
 </head>
 <body>
 <h1>hello</h1>
+<div id="box">
+    <div id="time">
+        <div class="hour"></div>
+        <div class="minutes"></div>
+        <div class="sec"></div>
+        <div class="cap"></div>
+    </div>
+    <ul id="dial"></ul>
+</div>
+<style>
+    /* 清除默认样式 */
+    *{margin: 0;padding: 0}
+    li{list-style: none}
+    /* 设置时钟的大小(宽高)及位置*/
+    #box{
+        width: 300px; height: 300px;
+        position: absolute;
+        left: 100px;  top: 100px;
+    }
+    /* 设置主区域(时分秒针) 大小(宽高)及位置**/
+    #time{
+        width: 300px; height: 300px;
+        position: absolute;
+        /* 这里因为其父级有定位所以设置位置就行，让它在恰当位置 */
+        left: 0;    top: 0;
+        /* 这里提升层级是防止表盘设置背景图图覆盖显示区 */
+        z-index: 999;
+    }
+    /* 设置原点(小帽子)大小及位置 */
+    .cap{
+        width: 12px;    height: 12px;
+        border-radius: 50%;
+        /* 这里是设置小帽子的颜色，这里用到的是css3背景色的渐变 */
+        background: -webkit-radial-gradient(circle,#eee,#000);
+        position: absolute;
+        left: 50%; top: 50%;
+        /* 这里将小帽子的位置定在中心位置 */
+        margin: -6px 0 0 -6px;
+    }
+    /* 时针配置 */
+    .hour{
+        width: 12px;height: 80px;
+        background: black;
+        /* 这里设置时针上端为尖下端为平(具体参考border-radius的使用方法) */
+        border-radius: 50% 50% 0 0;
+        position: absolute;
+        left: 50%;  top: 50%;
+        /* 这里时针定在恰当位置，因为其左右居中，底部与小帽子结合 */
+        margin: -80px 0 0 -6px;
+        /* 设置时针的底部中心为旋转奇点(运动时候围绕其旋转) */
+        -webkit-transform-origin:center bottom;
+    }
+    /* 分针配置 */
+    .minutes{
+        width: 10px;height: 100px;
+        background: black;
+        border-radius: 50% 50% 0 0;
+        position: absolute;
+        left: 50%; top: 50%;
+        margin: -100px 0 0 -5px;
+        -webkit-transform-origin:center bottom;
+    }
+    /* 秒针配置 */
+    .sec{
+        width: 8px;height: 120px;
+        background: red;
+        border-radius: 50% 50% 0 0;
+        position: absolute;
+        left: 50%;    top: 50%;
+        margin: -120px 0 0 -4px;
+        -webkit-transform-origin:center bottom;
+    }
+    /* 下面为表盘的配置，上面已说明，这里就不絮叨了 */
+    #dial{
+        width: 300px;height: 300px;
+        position: absolute;
+        left: 0;  top: 0;
+        border: 1px solid #000;
+        border-radius: 50%;
+        background:  rgba(77,46,238,.5) no-repeat 0 0;
+        background-size: cover;
+    }
+    #dial li{
+        width: 5px;height: 8px;
+        background: black;
+        position:absolute;
+        left:150px;top:0;
+        -webkit-transform-origin: 0 150px;
+    }
+    #dial li:nth-of-type(5n){height: 14px;width: 6px;}
+</style>
+<script>
+    /* 元素获取，获取html中时针、分针、秒针标签 */
+    var oH = document.querySelector('#time .hour');
+    var oM = document.querySelector('#time .minutes');
+    var oS = document.querySelector('#time .sec');
+    var timer = null;
+    /* 定义一个time函数，方便调用 */
+    function time(){
+        /* 获取时间对象 */
+        var oDate = new Date();
+        /* 获取时间对象里的“秒” */
+        var s = oDate.getSeconds();
+        /* 获取时间对象里的“分”，这里+s/60的意思是：当秒针运动时，分针也会把秒针的值计算到旋转角度内，
+      因为一分钟等一60秒，所以除的60 */
+        var m = oDate.getMinutes() + s/60;
+        /* 获取时间对象里的“时”，这里oDate.getHours()%12的意思是：
+       表盘上只有12个时辰而获取的是24小时制，所以这里就需要用“取膜(%)”进行转化；这里的+ m/60的意思是：
+       其实同上面分针加 s/60是一个原因。即当分针运动时，时针针也会把分针的值计算到旋转角度内，
+       因为一小时等于60分，所以除的60。***这里写就很好的避免了，时针由一个刻度“跳”到另一个刻度。*/
+        var h = oDate.getHours()%12 + m/60;
+        /* 这里将获取到的数值用js实现响应的角度选择即可 */
+        /* 360/12的意思是，表盘一圈360°，有12个时辰，所以每个时辰跨度为30° */
+        oH.style.webkitTransform = 'rotate('+ h*(360/12) +'deg)';
+        /* 360/60的意思是，表盘一圈360°，有60分，所以每分钟跨度为6° */
+        oM.style.webkitTransform = 'rotate('+ m*(360/60) +'deg)';
+        /* 360/60的意思是，表盘一圈360°，有60秒，所以每秒钟跨度为6° */
+        oS.style.webkitTransform = 'rotate('+ s*(360/60) +'deg)';
+    }
+    /* 这里直接执行一次的目的是：防止页面加载后会“跳”一下 */
+    time();
+    /* 下面的代码是制作表盘的过程，上面有描述这里就不多说了 */
+    var oUl = document.getElementById('dial');
+    for (var i=0;i<60;i++){
+        var oLi = document.createElement('li');
+        oLi.style.webkitTransform = 'rotate('+ i*6 +'deg)';
+        oUl.appendChild(oLi);
+    }
+    /* 这里需要每隔一段时间来“驱动”时钟走 */
+    timer = setInterval(function(){  time(); },30);
+</script>
 </body>
 </html>

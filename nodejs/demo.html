@@ -5,6 +5,9 @@
     <title>Title</title>
 </head>
 <body>
+<div class="more">
+    <div class="clock"></div>
+</div>
 <script>
     var arr = [13, 22, 43, 14, 55, 66]
     var obj = {0: 1, 1: 2, 2: 3, 3: 4}
@@ -107,5 +110,63 @@
 
     })
 </script>
+<style>
+
+    .more {position:relative; width:300px; height:50px; background-color:#bbb;margin: 200px auto;border-radius: 50px 50px 0 0}
+    /*.more:before {content:""; position:absolute; left:0; top:-2px; width:50%; height:2px; background-color:red}*/
+
+    .clock {
+        width: 2px;
+        height: 50px;
+        background: #000000;
+        margin: 20px auto;
+        position: absolute;
+        bottom: 0;
+        left: 150px;
+    }
+
+    .clock {
+        -webkit-animation: go 1s ease-in-out alternate infinite;
+        -moz-animation: go 1s ease-in-out alternate infinite;
+        animation: go 3s ease-in-out alternate  forwards;
+    }
+    @keyframes go {
+        0% {
+            -webkit-transform: rotate(90deg);
+            -webkit-transform-origin: top center;
+            -moz-transform: rotate(90deg);
+            -moz-transform-origin: top center;
+            transform: rotate(90deg);
+            transform-origin: top center;
+        }
+
+        30% {
+            -webkit-transform: rotate(270deg);
+            -webkit-transform-origin: top center;
+            -moz-transform: rotate(270deg);
+            -moz-transform-origin: top center;
+            transform: rotate(270deg);
+            transform-origin: top center;
+        }
+
+        60% {
+            -webkit-transform: rotate(90deg);
+            -webkit-transform-origin: top center;
+            -moz-transform: rotate(90deg);
+            -moz-transform-origin: top center;
+            transform: rotate(90deg);
+            transform-origin: top center;
+        }
+
+        100% {
+            -webkit-transform: rotate(135deg);
+            -webkit-transform-origin: top center;
+            -moz-transform: rotate(135deg);
+            -moz-transform-origin: top center;
+            transform: rotate(135deg);
+            transform-origin: top center;
+        }
+    }
+</style>
 </body>
 </html>
